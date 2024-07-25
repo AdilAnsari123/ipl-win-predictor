@@ -57,7 +57,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-image_path = 'C:/Users/acer/Downloads/image/ipl_image1.jpg'  # Path to the image file
+image_path = 'ipl_image1.jpg'  # Path to the image file
 
 # Check if the file exists
 if os.path.exists(image_path):
