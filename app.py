@@ -73,13 +73,12 @@ if os.path.exists(image_path):
 else:
     st.error("Image file not found. Please check the path.")
 teams = ['Sunrisers Hyderabad', 'Mumbai Indians', 'Royal Challengers Bangalore', 'Kolkata Knight Riders',
-        'Kings XI Punjab', 'Chennai Super Kings', 'Rajasthan Royals', 'Delhi Capitals']
+         'Kings XI Punjab', 'Chennai Super Kings', 'Rajasthan Royals', 'Delhi Capitals']
 
 cities = ['Hyderabad', 'Bangalore', 'Mumbai', 'Indore', 'Kolkata', 'Delhi', 'Chandigarh', 'Jaipur', 'Chennai',
-        'Cape Town', 'Port Elizabeth', 'Durban', 'Centurion', 'East London', 'Johannesburg', 'Kimberley',
-        'Bloemfontein', 'Ahmedabad', 'Cuttack', 'Nagpur', 'Dharamsala', 'Visakhapatnam', 'Pune', 'Raipur', 'Ranchi',
-        'Abu Dhabi', 'Sharjah', 'Mohali', 'Bengaluru']
-
+          'Cape Town', 'Port Elizabeth', 'Durban', 'Centurion', 'East London', 'Johannesburg', 'Kimberley',
+          'Bloemfontein', 'Ahmedabad', 'Cuttack', 'Nagpur', 'Dharamsala', 'Visakhapatnam', 'Pune', 'Raipur', 'Ranchi',
+          'Abu Dhabi', 'Sharjah', 'Mohali', 'Bengaluru']
 
 pipe = pickle.load(open('pipe.pkl', 'rb'))
 st.title('IPL Win Predictor')
@@ -123,13 +122,27 @@ if st.button('Predict Probability'):
         'rrr': [rrr]
     })
 
-    result = pipe.predict_proba(input_df)
-    loss = result[0][0]
-    win = result[0][1]
+    # Debugging: Print input data frame
+    st.write("Input Data Frame:")
+    st.write(input_df)
 
-    st.markdown(f"""
-    <div class='prediction-result'>
-        <h2>{batting_team} - {round(win * 100)}%</h2>
-        <h2>{bowling_team} - {round(loss * 100)}%</h2>
-    </div>
-    """, unsafe_allow_html=True)
+    try:
+        # Apply transformations step-by-step to debug
+        for name, transform in pipe.named_steps.items():
+            input_df = transform.transform(input_df)
+            st.write(f"After {name} transformation:")
+            st.write(input_df)
+
+        result = pipe.predict_proba(input_df)
+        loss = result[0][0]
+        win = result[0][1]
+
+        st.markdown(f"""
+        <div class='prediction-result'>
+            <h2>{batting_team} - {round(win * 100)}%</h2>
+            <h2>{bowling_team} - {round(loss * 100)}%</h2>
+        </div>
+        """, unsafe_allow_html=True)
+    except Exception as e:
+        st.error(f"Error in prediction: {str(e)}")
+        st.write(e)
